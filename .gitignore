@@ -1,0 +1,7 @@
+/target/
+.iml
+.iws
+.settings
+.classpath
+.project
+*.log
