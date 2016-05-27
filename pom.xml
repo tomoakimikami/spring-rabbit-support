@@ -19,6 +19,13 @@
         <nexus.host>52.69.66.154</nexus.host>
     </properties>
 
+    <scm>
+        <connection>scm:git:https://github.com/tomoakimikami/spring-rabbit-support.git</connection>
+        <developerConnection>scm:git:https://github.com/tomoakimikami/spring-rabbit-support.git</developerConnection>
+        <url>https://github.com/tomoakimikami/spring-rabbit-support</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <distributionManagement>
         <downloadUrl>http://${nexus.host}/nexus/content/repositories/spr</downloadUrl>
         <snapshotRepository>
