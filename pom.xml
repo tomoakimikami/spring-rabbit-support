@@ -23,7 +23,6 @@
         <connection>scm:git:https://github.com/tomoakimikami/spring-rabbit-support.git</connection>
         <developerConnection>scm:git:https://github.com/tomoakimikami/spring-rabbit-support.git</developerConnection>
         <url>https://github.com/tomoakimikami/spring-rabbit-support</url>
-        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
