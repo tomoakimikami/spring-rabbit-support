@@ -12,7 +12,7 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 group = 'spring.support'
-version = '1.0.0'
+version = '1.0.1-SNAPSHOT'
 
 description = """"""
 
