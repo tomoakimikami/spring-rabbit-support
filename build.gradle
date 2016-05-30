@@ -66,16 +66,12 @@ artifacts {
 publishing {
   publications {
     mavenJava(MavenPublication) {
-      artifactId 'dlq-management-ui'
+      artifactId 'spring-rabbit-support'
 
       from components.java
 
       artifact sourcesJar {
         classifier "sources"
-      }
-
-      pom.withXml {
-        asNode().appendNode('description', 'Embeddable RabbitMQ DLQ Management Console')
       }
     }
   }
