@@ -1,6 +1,3 @@
-/**
- * 
- */
 package spring.support.amqp.rabbit.repository.jdbc;
 
 import java.util.Optional;
@@ -14,22 +11,21 @@ import org.springframework.stereotype.Repository;
 import spring.support.amqp.rabbit.repository.MutexRepository;
 
 /**
+ * MutexRepositoryのOracle用実装.
  * @author yoshidan
  */
 @Repository
 @ConditionalOnMissingBean(MutexRepository.class)
 @ConditionalOnBean(JdbcTemplate.class)
 public class OracleMutexRepository implements MutexRepository {
-
+  /**
+   * JDBCテンプレート.
+   */
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
   /**
-   * select for update no waitでロックを取得する。
-   * エラーが発生した場合は既に処理済みのメッセージか処理中なので2重配信を意味する。
-   * 
-   * レコードが無かった場合 -> MutexNotFoundException = producerがmutexを作成していないためエラー
-   * リソースビジーが発生 -> CannotAcquireLockExceptions = 他のコンシューマが処理中のためエラー
+   * {@inheritDoc}.
    */
   @Override
   public void lock(String mutex) {
@@ -39,15 +35,16 @@ public class OracleMutexRepository implements MutexRepository {
   }
 
   /**
-   * Mutexを削除する。
-   * 
-   * @param mutex mutex
+   * {@inheritDoc}.
    */
   @Override
   public void delete(String mutex) {
     jdbcTemplate.update("delete from RABBITMQ_MUTEX where MUTEX = ?", mutex);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public String create() {
     long sequence =
@@ -57,14 +54,22 @@ public class OracleMutexRepository implements MutexRepository {
     return mutex;
   }
 
+  /**
+   * ミューテックス不在例外.
+   * @author Tomoaki Mikami
+   */
   private static class MutexNotFoundException extends RuntimeException {
-
+    /**
+     * serialVersionUID.
+     */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * コンストラクタ.
+     * @param message エラーメッセージ
+     */
     public MutexNotFoundException(String message) {
       super(message);
     }
-
   }
-
 }

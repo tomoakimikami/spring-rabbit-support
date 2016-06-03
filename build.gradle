@@ -2,7 +2,10 @@ buildscript {
   repositories { mavenCentral() }
   ext {
     springBootVersion = '1.3.5.RELEASE'
-//    nexusHost = "52.69.66.154"
+    springVersion = '4.2.5.RELEASE'
+    springRabbitVersion = '1.5.4.RELEASE'
+    checkstyleVersion = '6.19'
+    findbugsVersion = '3.0.1'
   }
   dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") }
 }
@@ -10,6 +13,8 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
 
 group = 'spring.support'
 version = '1.0.1-SNAPSHOT'
@@ -17,9 +22,7 @@ version = '1.0.1-SNAPSHOT'
 description = """"""
 
 // javacオプション
-compileJava {
-  options.encoding = 'UTF-8'
-}
+compileJava { options.encoding = 'UTF-8' }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -30,13 +33,20 @@ repositories {
   jcenter()
 }
 
+findbugs {
+  toolVersion = "${findbugsVersion}"
+  effort = "default" // min,default,max
+  reportLevel = "high" // low,medium,high
+  ignoreFailures = true
+}
+
 dependencies {
-  compile group: 'org.springframework.amqp', name: 'spring-rabbit', version:'1.5.4.RELEASE'
-  compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.5.RELEASE'
+  compile group: 'org.springframework.amqp', name: 'spring-rabbit', version:"${springRabbitVersion}"
+  compile group: 'org.springframework', name: 'spring-jdbc', version:"${springVersion}"
   compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version:"${springBootVersion}"
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version:"${springBootVersion}"
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version:"${springBootVersion}"
-  testCompile group: 'org.springframework', name: 'spring-test', version:'4.2.5.RELEASE'
+  testCompile group: 'org.springframework', name: 'spring-test', version:"${springVersion}"
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat', version:"${springBootVersion}"
   testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter', version:"${springBootVersion}") { exclude(module: 'commons-logging') }
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:"${springBootVersion}"
@@ -44,6 +54,8 @@ dependencies {
   testCompile group: 'junit', name: 'junit', version:'4.12'
   testCompile group: 'org.projectlombok', name: 'lombok', version:'1.16.6'
   testCompile group: 'oracle.jdbc', name: 'ojdbc7', version:'12.1.0.2.0'
+  checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
+  findbugs "com.google.code.findbugs:findbugs:${findbugsVersion}"
 }
 
 // Mavenリポジトリへ配置する対象にソースとJavaDocのJARも含める
@@ -70,9 +82,7 @@ publishing {
 
       from components.java
 
-      artifact sourcesJar {
-        classifier "sources"
-      }
+      artifact sourcesJar { classifier "sources" }
     }
   }
   repositories {

@@ -1,6 +1,3 @@
-/**
- *
- */
 package spring.support.amqp.rabbit;
 
 import org.slf4j.Logger;
@@ -17,14 +14,17 @@ import java.util.UUID;
 import spring.support.amqp.rabbit.repository.MutexRepository;
 
 /**
+ * 二重配信を抑止して一度だけメッセージを送信することを保証するメッセージ送信エージェント.
  * @author yoshidan
  */
 public class ExactlyOnceDeliveryProducer {
-
+  /**
+   * ミューテックスID用キー.
+   */
   public static final String MUTEX = "x-message-mutex";
 
   /**
-   * 送信失敗メッセージの格納
+   * 送信失敗メッセージの格納.
    */
   private static final Logger UNDELIVERD_MESSAGE_LOGGER =
       LoggerFactory.getLogger("UNDELIVERD_MESSAGE");
@@ -38,17 +38,18 @@ public class ExactlyOnceDeliveryProducer {
   private MutexRepository repository;
 
   @Autowired(required = false)
-  private ErrorHandler handler = (mutex, message, t) -> {
-    LOGGER.error(t.getMessage(), t);
+  private ErrorHandler handler = (mutex, message, throwable) -> {
+    LOGGER.error(throwable.getMessage(), throwable);
     UNDELIVERD_MESSAGE_LOGGER.error(String.format("mutex=%s,message=%s", mutex, message));
   };
 
   /**
    * トランザクション完了後メッセージを送信する.
    *
-   * @param exchange
-   * @param routingKey
-   * @param payload
+   * @param exchange メッセージ送信先エクスチェンジ
+   * @param routingKey メッセージルーティングキー
+   * @param payload メッセージ本体
+   * @return メッセージに割り当てられたミューテックスキー
    */
   public String send(String exchange, String routingKey, Object payload) {
     return send(exchange, routingKey, payload, handler);
@@ -57,10 +58,11 @@ public class ExactlyOnceDeliveryProducer {
   /**
    * トランザクション完了後メッセージを送信する.
    *
-   * @param exchange
-   * @param routingKey
-   * @param payload
-   * @param handler
+   * @param exchange メッセージ送信先エクスチェンジ
+   * @param routingKey メッセージルーティングキー
+   * @param payload メッセージ本体
+   * @param handler エラーハンドラ
+   * @return メッセージに割り当てられたミューテックスキー
    */
   public String send(String exchange, String routingKey, Object payload, ErrorHandler handler) {
 
@@ -83,8 +85,8 @@ public class ExactlyOnceDeliveryProducer {
             public void afterCommit() {
               try {
                 template.send(exchange, routingKey, message);
-              } catch (Throwable t) {
-                handler.accept(mutex, savingMessage, t);
+              } catch (Throwable throwable) {
+                handler.accept(mutex, savingMessage, throwable);
               }
             }
           });
@@ -99,6 +101,6 @@ public class ExactlyOnceDeliveryProducer {
 
   @FunctionalInterface
   public static interface ErrorHandler {
-    void accept(String mutex, String savingMessage, Throwable t);
+    void accept(String mutex, String savingMessage, Throwable throwable);
   }
 }
