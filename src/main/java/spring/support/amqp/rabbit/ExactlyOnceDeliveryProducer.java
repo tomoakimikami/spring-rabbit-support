@@ -8,6 +8,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 
@@ -71,7 +72,7 @@ public class ExactlyOnceDeliveryProducer {
     properties.getHeaders().put(MUTEX, mutex);
     Message message = template.getMessageConverter().toMessage(payload, properties);
     MessageProperties messageProperties = message.getMessageProperties();
-    if (messageProperties.getMessageId() == null) {
+    if (StringUtils.isEmpty(messageProperties.getMessageId())) {
       String id = UUID.randomUUID().toString();
       messageProperties.setMessageId(id);
     }
