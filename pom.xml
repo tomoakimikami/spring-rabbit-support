@@ -17,13 +17,18 @@
         <java.version>1.8</java.version>
     </properties>
 
-    <distributionManagement>
-       <repository>
-           <id>internal.repo</id>
-           <name>Temporary Staging Repository</name>
-           <url>file://${project.basedir}/../archivar</url>
-       </repository>
-    </distributionManagement>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>nexus-snapshots</name>
+			<url>http://${nexus.host}/nexus/content/repositories/${nexus.snapshots}/</url>
+		</snapshotRepository>
+		<repository>
+			<id>nexus-releases</id>
+			<name>nexus-releases</name>
+			<url>http://${nexus.host}/nexus/content/repositories/${nexus.releases}/</url>
+		</repository>
+	</distributionManagement>
 
     <build>
         <plugins>
