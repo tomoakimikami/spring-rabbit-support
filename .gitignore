@@ -5,8 +5,3 @@
 .classpath
 .project
 *.log
-
-/build/
-/.gradle/
-!gradle-wrapper.jar
-/bin/
